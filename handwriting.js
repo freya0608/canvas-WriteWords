@@ -1,10 +1,11 @@
 /**
  * Created by freya on 2017/4/2.
  */
-var canvasWidth = 600;
+var canvasWidth = Math.min(600 ,$(window).width()-20);
 var canvasHeight = canvasWidth;
-var isMouseDown = false;
 
+var strokeColor = 'black';
+var isMouseDown = false;
 var lastLocation = {x:0,y:0};
 var lastTimestamp = 0;
 var lastLineWidth = -1;
@@ -16,6 +17,8 @@ var context = canvas.getContext('2d');
 canvas.width  = canvasWidth;
 canvas.height = canvasHeight;
 
+$('#controller').css('width',canvasWidth+'px');
+
 drawGrid();
 
 $('#clear_btn').click(
@@ -23,15 +26,32 @@ $('#clear_btn').click(
         context.clearRect(0,0,canvasWidth,canvasHeight);
         drawGrid();
     }
-)
+);
 
-canvas.onmousedown = function (e) {
-    e.preventDefault();
+$('.color_btn').click(
+    function (e) {
+        $('.color_btn').removeClass('color_btn_selected');
+        $(this).addClass('color_btn_selected');
+        strokeColor = $(this).css('background-color');
+    }
+);
+
+
+function beginStroke(point) {
     isMouseDown = true;
     console.log('mousedown');
 
-    lastLocation = windowToCanvas(e.clientX,e.clientY);
+    lastLocation = windowToCanvas(point.clientX,point.clientY);
     lastTimestamp = new Date().getTime();
+}
+
+canvas.onmousedown = function (e) {
+    e.preventDefault();
+    // isMouseDown = true;
+    // console.log('mousedown');
+    //
+    // lastLocation = windowToCanvas(e.clientX,e.clientY);
+    // lastTimestamp = new Date().getTime();
 };
 
 canvas.onmouseup = function (e) {
@@ -61,7 +81,7 @@ canvas.onmousemove = function (e) {
         context.moveTo(lastLocation.x, lastLocation.y);
         context.lineTo(curLocation.x,  curLocation.y);
 
-        context.strokeStyle= 'black';
+        context.strokeStyle= strokeColor;
         context.lineWidth = lineWidth;
         context.lineCap = 'round';//笔画链接流畅
         context.lineJoin = 'round';

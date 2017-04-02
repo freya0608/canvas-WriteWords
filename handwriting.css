@@ -4,7 +4,7 @@
     /*border:1px solid #aaa;*/
 }
 #controller{
-    width: 800px;
+
     margin: 0 auto;
 }
 .op_btn{
@@ -30,6 +30,39 @@
     clear: both;
 }
 
+.color_btn{
+    float: left;
+    margin: 10px 10px 0 0;
+    border: 5px solid white;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px 5px;
+    cursor: pointer;
+}
+.color_btn:hover{
+    border:5px solid violet;
+}
+.color_btn_selected{
+    border: 5px solid blueviolet;
+}
+#black_btn{
+    background-color: black;
+}
+#green_btn{
+    background-color: green;
+}
+#blue_btn{
+    background-color: blue;
+}
+#red_btn{
+    background-color: red;
+}
+#orange_btn{
+    background-color: orange;
+}
+#yellow_btn{
+    background-color: yellow;
+}
 
 
 
