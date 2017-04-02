@@ -39,59 +39,112 @@ $('.color_btn').click(
 
 function beginStroke(point) {
     isMouseDown = true;
-    console.log('mousedown');
+    //console.log('mousedown');
 
-    lastLocation = windowToCanvas(point.clientX,point.clientY);
+    lastLocation = windowToCanvas(point.x,point.y);
     lastTimestamp = new Date().getTime();
+}
+
+function endStroke() {
+    isMouseDown= false;
+}
+
+function moveStroke(point) {
+    var  curLocation = windowToCanvas(point.x,point.y);
+    var curTimestamp = new Date().getTime();
+    var s = calDistance(curLocation,lastLocation);
+    var t = curTimestamp - lastTimestamp;
+
+    var lineWidth = calLineWidth(t,s);
+
+    //lastLocation和curLocation之间绘制线段
+    context.beginPath();
+    context.moveTo(lastLocation.x, lastLocation.y);
+    context.lineTo(curLocation.x,  curLocation.y);
+
+    context.strokeStyle= strokeColor;
+    context.lineWidth = lineWidth;
+    context.lineCap = 'round';//笔画链接流畅
+    context.lineJoin = 'round';
+    context.stroke();
+
+    lastLocation = curLocation;
+    lastTimestamp = curTimestamp;
+    lastLineWidth = lineWidth;
 }
 
 canvas.onmousedown = function (e) {
     e.preventDefault();
+
+    //放beginStroke中
     // isMouseDown = true;
     // console.log('mousedown');
     //
     // lastLocation = windowToCanvas(e.clientX,e.clientY);
     // lastTimestamp = new Date().getTime();
+
+    beginStroke({x:e.clientX,y:e.clientY})
 };
 
 canvas.onmouseup = function (e) {
     e.preventDefault();
-    isMouseDown = false;
-    console.log('mouseup')
+    //isMouseDown = false;
+    //console.log('mouseup')
+    endStroke();
 
 };
 canvas.onmouseout = function (e) {
     e.preventDefault();
-    isMouseDown = false;
-    console.log('mouseout')
+    //isMouseDown = false;
+    //console.log('mouseout')
+    endStroke();
 };
 canvas.onmousemove = function (e) {
     e.preventDefault();
     if(isMouseDown){
-        console.log('mousemove');
-        var  curLocation = windowToCanvas(e.clientX,e.clientY);
-        var curTimestamp = new Date().getTime();
-        var s = calDistance(curLocation,lastLocation);
-        var t = curTimestamp - lastTimestamp;
-
-        var lineWidth = calLineWidth(t,s);
-
-        //lastLocation和curLocation之间绘制线段
-        context.beginPath();
-        context.moveTo(lastLocation.x, lastLocation.y);
-        context.lineTo(curLocation.x,  curLocation.y);
-
-        context.strokeStyle= strokeColor;
-        context.lineWidth = lineWidth;
-        context.lineCap = 'round';//笔画链接流畅
-        context.lineJoin = 'round';
-        context.stroke();
-
-        lastLocation = curLocation;
-        lastTimestamp = curTimestamp;
-        lastLineWidth = lineWidth;
+        moveStroke({x:e.clientX,y:e.clientY});
+        // console.log('mousemove');
+        // var  curLocation = windowToCanvas(e.clientX,e.clientY);
+        // var curTimestamp = new Date().getTime();
+        // var s = calDistance(curLocation,lastLocation);
+        // var t = curTimestamp - lastTimestamp;
+        //
+        // var lineWidth = calLineWidth(t,s);
+        //
+        // //lastLocation和curLocation之间绘制线段
+        // context.beginPath();
+        // context.moveTo(lastLocation.x, lastLocation.y);
+        // context.lineTo(curLocation.x,  curLocation.y);
+        //
+        // context.strokeStyle= strokeColor;
+        // context.lineWidth = lineWidth;
+        // context.lineCap = 'round';//笔画链接流畅
+        // context.lineJoin = 'round';
+        // context.stroke();
+        //
+        // lastLocation = curLocation;
+        // lastTimestamp = curTimestamp;
+        // lastLineWidth = lineWidth;
     }
 };
+
+canvas.addEventListener('touchstart',function (e) {
+    e.preventDefault();
+    touch = e.touches[0];
+    beginStroke({x:touch.pageX,y:touch.pageY})
+});
+canvas.addEventListener('touchmove',function (e) {
+    e.preventDefault();
+    if(isMouseDown){
+        touch = e.touches[0];
+        moveStroke({x:touch.pageX,y:touch.pageY});
+    }
+});
+canvas.addEventListener('touchend',function (e) {
+    e.preventDefault();
+    endStroke();
+});
+
 
 
 var maxLineWidth = 30;
