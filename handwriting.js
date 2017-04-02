@@ -18,6 +18,13 @@ canvas.height = canvasHeight;
 
 drawGrid();
 
+$('#clear_btn').click(
+    function (e) {
+        context.clearRect(0,0,canvasWidth,canvasHeight);
+        drawGrid();
+    }
+)
+
 canvas.onmousedown = function (e) {
     e.preventDefault();
     isMouseDown = true;
